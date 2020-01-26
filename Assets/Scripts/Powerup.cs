@@ -6,7 +6,7 @@ public class Powerup : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 3.0f;
-    [SerializeField] //0 = triple, 1 = speed, 2 = shields
+    [SerializeField] //0 = triple, 1 = speed, 2 = shields, 3 = ammo, 4 = health, 5 = missile
     private int _powerupID;
     [SerializeField]
     private AudioClip _pickupSound;
@@ -36,6 +36,15 @@ public class Powerup : MonoBehaviour
                         break;
                     case 2:
                         player.ShieldsActive();
+                        break;
+                    case 3:
+                        player.RefillAmmo();
+                        break;
+                    case 4:
+                        player.HealthPickup();
+                        break;
+                    case 5:
+                        player.SplitShotActive();
                         break;
                     default:
                         Debug.LogError("Invalid Selection for Powerup");
