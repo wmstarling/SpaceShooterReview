@@ -24,6 +24,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image _fuelBar;
     private Player _player;
+    [SerializeField]
+    private Text _waveText;
     void Start()
     {
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
@@ -37,9 +39,10 @@ public class UIManager : MonoBehaviour
             Debug.LogError("Player is Null on UI");
         }
         _scoreText.text = "Score: " + 0;
-        _ammoText.text = "Ammo Count: " + 15;
+        _ammoText.text = "Ammo Count: " + 15 + "/15";
         _gameOverText.gameObject.SetActive(false);
         _restartText.gameObject.SetActive(false);
+        _waveText.gameObject.SetActive(false);
     }
     public void UpdateScore(int score)
     {
@@ -64,7 +67,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAmmo(int ammoCount)
     {
-        _ammoText.text = "Ammo Count: " + ammoCount;
+        _ammoText.text = "Ammo Count: " + ammoCount + "/15";
         if(ammoCount == 5)
         {
             StartCoroutine(LowAmmoRoutine());
@@ -90,6 +93,17 @@ public class UIManager : MonoBehaviour
             StartCoroutine(RefillFuelRoutine());
         }
         
+    }
+    public void UpdateWave(int waveNumber)
+    {
+        _waveText.text = "Wave " + waveNumber + " Incoming";
+        StartCoroutine(WaveAnnounceRoutine());
+    }
+    IEnumerator WaveAnnounceRoutine()
+    {
+        _waveText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(3.0f);
+        _waveText.gameObject.SetActive(false);
     }
     IEnumerator LowAmmoRoutine()
     {

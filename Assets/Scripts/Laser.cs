@@ -7,6 +7,7 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private float _speed = 8.0f;
     private bool _isEnemyLaser = false;
+    private bool _isSmartLaser = false;
     void Update()
     {
         if(_isEnemyLaser == false)
@@ -49,6 +50,10 @@ public class Laser : MonoBehaviour
     {
         _isEnemyLaser = true;
     }
+    public void AssignSmartLaser()
+    {
+        _isSmartLaser = true;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -57,5 +62,15 @@ public class Laser : MonoBehaviour
             Player player = other.GetComponent<Player>();
             player.Damage();
         }
+        else if(other.tag == "Player" && _isSmartLaser == true)
+        {
+            Player player = other.GetComponent<Player>();
+            player.Damage();
+        }
+    }
+
+    public bool isEnemyLaser()
+    {
+        return _isEnemyLaser;
     }
 }

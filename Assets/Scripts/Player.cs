@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private float _speedMultiplier = 2;
     private float _thrusterMultiplier = 3.0f;
     private float _speedPlusThrust = 4.0f;
+    private float _speedNegative = 2.0f;
     [SerializeField]
     private bool _canThrust = true;
     [SerializeField]
@@ -18,6 +19,8 @@ public class Player : MonoBehaviour
     private GameObject _tripleShotPrefab;
     [SerializeField]
     private GameObject _splitPrefab;
+    [SerializeField]
+    private GameObject _homingPrefab;
     [SerializeField]
     private float _fireRate = 0.15f;
     private float _canFire = -1f;
@@ -31,6 +34,8 @@ public class Player : MonoBehaviour
     private UIManager _uiManager;
     private bool _isSpeedActive = false;
     private bool _isTripleShotActive = false;
+    private bool _isSpeedNegative = false;
+    private bool _isHomingActive = false;
     [SerializeField]
     private bool _isSplitActive = false;
     [SerializeField]
@@ -107,6 +112,10 @@ public class Player : MonoBehaviour
         {
             transform.Translate(direction * (_speed * _speedMultiplier) * Time.deltaTime);
         }
+        else if(_isSpeedNegative == true)
+        {
+            transform.Translate(direction * _speedNegative * Time.deltaTime);
+        }
         else
         {
             transform.Translate(direction * _speed * Time.deltaTime);
@@ -131,7 +140,7 @@ public class Player : MonoBehaviour
             Instantiate(_tripleShotPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
             _audioSource.Play();
         }
-        else if(_isTripleShotActive == false && _fireAllowed == true && _isSplitActive == false)
+        else if(_isTripleShotActive == false && _fireAllowed == true && _isSplitActive == false && _isHomingActive == false)
         {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
             _audioSource.Play();
@@ -147,6 +156,10 @@ public class Player : MonoBehaviour
             Instantiate(_splitPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
             _audioSource.Play();
         }
+        else if (_isHomingActive == true)
+        {
+            Instantiate(_homingPrefab, transform.position + new Vector3(0, 1.42f, 0), Quaternion.identity);
+        }
     }
     public void Damage()
     {
@@ -157,6 +170,7 @@ public class Player : MonoBehaviour
                 case 0:
                     _isShieldActive = false;
                     _shieldVisual.SetActive(false);
+                    _shieldHitCount = 3;
                     break;
                 case 1:
                     _shieldVisual.GetComponent<SpriteRenderer>().color = Color.red;
@@ -263,5 +277,26 @@ public class Player : MonoBehaviour
             _canThrust = false;
             _uiManager.UpdateFuel(_canThrust);
         }
+    }
+
+    public void NegativeSpeed()
+    {
+        _isSpeedNegative = true;
+        StartCoroutine(BadSpeedRoutine());
+    }
+    IEnumerator BadSpeedRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isSpeedNegative = false;
+    }
+    public void HomingActive()
+    {
+        StartCoroutine(HomingShotRoutine());   
+    }
+    IEnumerator HomingShotRoutine()
+    {
+        _isHomingActive = true;
+        yield return new WaitForSeconds(5.0f);
+        _isHomingActive = false;
     }
 }
