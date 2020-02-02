@@ -30,12 +30,16 @@ public class Player : MonoBehaviour
     private bool _fireAllowed = true;
     [SerializeField]
     private int _lives = 3;
+    [SerializeField]
     private SpawnManager _spawnManager;
+    [SerializeField] 
     private UIManager _uiManager;
+    private Powerup _powerup;
     private bool _isSpeedActive = false;
     private bool _isTripleShotActive = false;
     private bool _isSpeedNegative = false;
     private bool _isHomingActive = false;
+    private bool _isMagnetActive = false;
     [SerializeField]
     private bool _isSplitActive = false;
     [SerializeField]
@@ -51,11 +55,13 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _laserSound;
     private AudioSource _audioSource;
+    [SerializeField]
     private ShakeBehavior _shakeBehavior;
 
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
+        _powerup = GameObject.FindGameObjectWithTag("Powerup").GetComponent<Powerup>();
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
@@ -81,6 +87,10 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Shake on Main Camera is Null");
         }
+        if(_powerup == null)
+        {
+            Debug.LogError("Powerup null on Player");
+        }
     }
 
     void Update()
@@ -89,6 +99,10 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
         {
             FireLaser();
+        }
+        if(Input.GetKeyDown(KeyCode.C) && _isMagnetActive == true)
+        {
+            _powerup.ActiveMagnet();
         }
 
     }
@@ -298,5 +312,17 @@ public class Player : MonoBehaviour
         _isHomingActive = true;
         yield return new WaitForSeconds(5.0f);
         _isHomingActive = false;
+    }
+
+    public void MagnetActive()
+    {
+        StartCoroutine(MagnetRoutine());
+    }
+
+    IEnumerator MagnetRoutine()
+    {
+        _isMagnetActive = true;
+        yield return new WaitForSeconds(5.0f);
+        _isMagnetActive = false;
     }
 }

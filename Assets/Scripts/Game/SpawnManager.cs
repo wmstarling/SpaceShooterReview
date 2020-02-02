@@ -12,7 +12,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _enemies;
     [SerializeField]
-    private int _powerUpCount; //counts how many before missels are released
+    private int _powerUpCount; //counts how many before a rare powerup spawns
     [SerializeField]
     private int[] _waveCount;
     private UIManager _uiManager;
@@ -48,8 +48,9 @@ public class SpawnManager : MonoBehaviour
                 }
                 yield return new WaitForSeconds(6.0f);
             }
-            //once this exits it is the final wave
-            //spawn the boss
+            //call UIManager to let player know that the boss is incoming
+            //wait 5 seconds then spawn the boss
+            //check to see if the boss is alive, if so do nothing, if not then game over victory UI
         }
     }
     IEnumerator SpawnPowerupRoutine()
@@ -62,7 +63,7 @@ public class SpawnManager : MonoBehaviour
             if (_powerUpCount >= 5)
             {
                 _powerUpCount = 0;
-                int randomRare = Random.Range(6,8);
+                int randomRare = Random.Range(6,9);
                 Instantiate(_powerups[randomRare], posToSpawn, Quaternion.identity);
                 float waitTime = Random.Range(3f, 7f);
                 yield return new WaitForSeconds(waitTime);
